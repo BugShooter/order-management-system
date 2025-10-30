@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, INestApplication } from '@nestjs/common';
 import { AppModule } from './app.module';
 
-async function bootstrap() {
+export async function createApp(): Promise<INestApplication> {
   const app = await NestFactory.create(AppModule);
-  
+
   // Enable validation globally
   app.useGlobalPipes(
     new ValidationPipe({
@@ -13,7 +13,16 @@ async function bootstrap() {
       transform: true, // Auto-transform payloads to DTO types
     }),
   );
-  
+
+  return app;
+}
+
+async function bootstrap() {
+  const app = await createApp();
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+
+// Only run bootstrap if this file is executed directly
+if (require.main === module) {
+  bootstrap();
+}

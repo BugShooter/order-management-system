@@ -14,7 +14,7 @@ import { WorkersModule } from './workers/workers.module';
       database: 'database.sqlite',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // only for dev environment
-      logging: true,
+      logging: false,
     }),
     CommonModule,
     OrdersModule,

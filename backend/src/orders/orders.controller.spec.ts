@@ -6,9 +6,22 @@ describe('OrdersController', () => {
   let controller: OrdersController;
 
   beforeEach(async () => {
+    const mockOrdersService = {
+      create: jest.fn(),
+      findAll: jest.fn(),
+      findOne: jest.fn(),
+      update: jest.fn(),
+      remove: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OrdersController],
-      providers: [OrdersService],
+      providers: [
+        {
+          provide: OrdersService,
+          useValue: mockOrdersService,
+        },
+      ],
     }).compile();
 
     controller = module.get<OrdersController>(OrdersController);

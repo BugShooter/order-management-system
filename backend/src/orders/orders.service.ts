@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order, OrderItem } from './entities';
+import { ProductsService } from '../products/products.service';
 
 @Injectable()
 export class OrdersService {
@@ -12,14 +13,48 @@ export class OrdersService {
     private readonly orderRepository: Repository<Order>,
     @InjectRepository(OrderItem)
     private readonly orderItemRepository: Repository<OrderItem>,
+    private readonly productsService: ProductsService,
   ) {}
 
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
-    // Создаем заказ с items (cascade: true автоматически сохранит items)
+    // Validate products exist and create snapshots
+    const items: Partial<OrderItem>[] = [];
+    let total = 0;
+
+    for (const itemDto of createOrderDto.items) {
+      const product = await this.productsService.findOne(itemDto.productId);
+      
+      if (product.stockQuantity < itemDto.quantity) {
+        throw new BadRequestException(
+          `Insufficient stock for product ${product.name}. Available: ${product.stockQuantity}`,
+        );
+      }
+
+      const itemTotal = itemDto.price * itemDto.quantity;
+      total += itemTotal;
+
+      items.push({
+        productId: product.id,
+        quantity: itemDto.quantity,
+        price: itemDto.price,
+        productSnapshot: {
+          id: product.id,
+          name: product.name,
+          basePrice: product.basePrice,
+          attributes: product.attributes,
+        },
+      });
+    }
+
+    // Create order with items (cascade: true will automatically save items)
     const order = this.orderRepository.create({
-      ...createOrderDto,
-      status: 'draft', // начальный статус
+      customerId: createOrderDto.customerId,
+      shippingAddress: createOrderDto.shippingAddress,
+      status: 'draft',
+      total,
+      items: items as OrderItem[],
     });
+
     return await this.orderRepository.save(order);
   }
 

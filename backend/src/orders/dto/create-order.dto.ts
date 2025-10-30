@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsUUID, IsArray, ValidateNested, IsNotEmpty, IsNumber, IsPositive, IsString, IsObject } from 'class-validator';
+import { IsUUID, IsArray, ValidateNested, IsNotEmpty, IsNumber, IsPositive, IsString, IsObject, ArrayMinSize } from 'class-validator';
 import type { ShippingAddress } from '../../types/global';
 
 export class CreateOrderItemDto {
@@ -40,6 +40,7 @@ export class CreateOrderDto {
   customerId: string;
 
   @IsArray()
+  @ArrayMinSize(1, { message: 'Order must contain at least one item' })
   @ValidateNested({ each: true })
   @Type(() => CreateOrderItemDto)
   items: CreateOrderItemDto[];

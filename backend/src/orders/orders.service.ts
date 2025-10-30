@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order, OrderItem } from './entities';
 import { ProductsService } from '../products/products.service';
+import type { IQueueService } from '../common';
 
 @Injectable()
 export class OrdersService {
@@ -14,6 +15,8 @@ export class OrdersService {
     @InjectRepository(OrderItem)
     private readonly orderItemRepository: Repository<OrderItem>,
     private readonly productsService: ProductsService,
+    @Inject('IQueueService')
+    private readonly queueService: IQueueService,
   ) {}
 
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
@@ -55,7 +58,22 @@ export class OrdersService {
       items: items as OrderItem[],
     });
 
-    return await this.orderRepository.save(order);
+    const savedOrder = await this.orderRepository.save(order);
+
+    // Publish event to queue
+    await this.queueService.publish({
+      type: 'order.created',
+      orderId: savedOrder.id,
+      timestamp: new Date(),
+      data: {
+        order: savedOrder,
+        customerId: savedOrder.customerId,
+        total: savedOrder.total,
+        itemsCount: savedOrder.items.length,
+      },
+    });
+
+    return savedOrder;
   }
 
   async findAll(): Promise<Order[]> {

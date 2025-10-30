@@ -1,17 +1,26 @@
-import { ProductAttributes } from '../../types/global';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import type { ProductAttributes } from '../../types/global';
 
+@Entity('products')
 export class Product {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
-  name: string;
-  basePrice: number;
-  stockQuantity: number;
-  attributes: ProductAttributes;
-  createdAt: Date;
-  updatedAt: Date;
 
-  constructor(partial: Partial<Product>) {
-    Object.assign(this, partial);
-    this.createdAt = this.createdAt || new Date();
-    this.updatedAt = new Date();
-  }
+  @Column()
+  name: string;
+
+  @Column('decimal', { precision: 10, scale: 2 })
+  basePrice: number;
+
+  @Column('int', { default: 0 })
+  stockQuantity: number;
+
+  @Column('simple-json')
+  attributes: ProductAttributes;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

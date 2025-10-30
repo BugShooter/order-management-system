@@ -1,19 +1,29 @@
-import { WorkerConfig } from '../../types/global';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import type { WorkerConfig } from '../../types/global';
 
+@Entity('worker_configurations')
 export class WorkerConfiguration {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
-  workerType: string; // email, webhook, inventory
-  name: string;
-  enabled: boolean;
-  triggerStatuses: string[]; // ['confirmed', 'shipped']
-  config: WorkerConfig; 
-  createdAt: Date;
-  updatedAt: Date;
 
-  constructor(partial: Partial<WorkerConfiguration>) {
-    Object.assign(this, partial);
-    this.createdAt = this.createdAt || new Date();
-    this.updatedAt = new Date();
-    this.enabled = this.enabled ?? true;
-  }
+  @Column()
+  workerType: string; // email, webhook, inventory
+
+  @Column()
+  name: string;
+
+  @Column({ default: true })
+  enabled: boolean;
+
+  @Column('simple-array')
+  triggerStatuses: string[]; // ['confirmed', 'shipped']
+
+  @Column('simple-json')
+  config: WorkerConfig;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

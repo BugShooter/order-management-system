@@ -1,9 +1,13 @@
-export class OrderStatusTransition {
-  id: string;
-  fromStatus: string;
-  toStatus: string;
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-  constructor(partial: Partial<OrderStatusTransition>) {
-    Object.assign(this, partial);
-  }
+@Entity('order_status_transitions')
+export class OrderStatusTransition {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  fromStatus: string;
+
+  @Column()
+  toStatus: string;
 }

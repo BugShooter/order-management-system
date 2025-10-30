@@ -1,26 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateWorkerDto } from './dto/create-worker.dto';
 import { UpdateWorkerDto } from './dto/update-worker.dto';
+import { WorkerConfiguration } from './entities';
 
 @Injectable()
 export class WorkersService {
-  create(createWorkerDto: CreateWorkerDto) {
-    return 'This action adds a new worker';
+  constructor(
+    @InjectRepository(WorkerConfiguration)
+    private readonly workerRepository: Repository<WorkerConfiguration>,
+  ) {}
+
+  async create(createWorkerDto: CreateWorkerDto): Promise<WorkerConfiguration> {
+    const worker = this.workerRepository.create(createWorkerDto);
+    return await this.workerRepository.save(worker);
   }
 
-  findAll() {
-    return `This action returns all workers`;
+  async findAll(): Promise<WorkerConfiguration[]> {
+    return await this.workerRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} worker`;
+  async findOne(id: string): Promise<WorkerConfiguration> {
+    const worker = await this.workerRepository.findOne({ where: { id } });
+    if (!worker) {
+      throw new NotFoundException(`Worker with ID ${id} not found`);
+    }
+    return worker;
   }
 
-  update(id: number, updateWorkerDto: UpdateWorkerDto) {
-    return `This action updates a #${id} worker`;
+  async update(id: string, updateWorkerDto: UpdateWorkerDto): Promise<WorkerConfiguration> {
+    const worker = await this.findOne(id);
+    Object.assign(worker, updateWorkerDto);
+    return await this.workerRepository.save(worker);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} worker`;
+  async remove(id: string): Promise<void> {
+    const worker = await this.findOne(id);
+    await this.workerRepository.remove(worker);
   }
 }

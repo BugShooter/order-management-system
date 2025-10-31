@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -26,7 +31,7 @@ export class OrdersService {
 
     for (const itemDto of createOrderDto.items) {
       const product = await this.productsService.findOne(itemDto.productId);
-      
+
       if (product.stockQuantity < itemDto.quantity) {
         throw new BadRequestException(
           `Insufficient stock for product ${product.name}. Available: ${product.stockQuantity}`,

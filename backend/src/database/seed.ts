@@ -57,7 +57,9 @@ export async function seed() {
     console.log(`Seeded ${products.length} products`);
 
     // Seed Order Status Transitions (workflow)
-    const transitionRepository = dataSource.getRepository(OrderStatusTransition);
+    const transitionRepository = dataSource.getRepository(
+      OrderStatusTransition,
+    );
     const transitions = [
       { fromStatus: 'draft', toStatus: 'confirmed' },
       { fromStatus: 'confirmed', toStatus: 'processing' },
@@ -110,7 +112,7 @@ export async function seed() {
           url: 'https://warehouse.example.com/api/orders',
           method: 'POST',
           headers: {
-            'Authorization': 'Bearer YOUR_API_KEY',
+            Authorization: 'Bearer YOUR_API_KEY',
             'Content-Type': 'application/json',
           },
           timeout: 5000,

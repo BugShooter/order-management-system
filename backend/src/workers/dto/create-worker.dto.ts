@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsBoolean, IsArray, IsObject, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsBoolean,
+  IsArray,
+  IsObject,
+  IsOptional,
+} from 'class-validator';
 import type { WorkerConfig } from '../../types/global';
 
 export class CreateWorkerDto {

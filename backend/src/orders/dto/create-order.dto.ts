@@ -1,5 +1,15 @@
 import { Type } from 'class-transformer';
-import { IsUUID, IsArray, ValidateNested, IsNotEmpty, IsNumber, IsPositive, IsString, IsObject, ArrayMinSize } from 'class-validator';
+import {
+  IsUUID,
+  IsArray,
+  ValidateNested,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+  IsObject,
+  ArrayMinSize,
+} from 'class-validator';
 import type { ShippingAddress } from '../../types/global';
 
 export class CreateOrderItemDto {

@@ -1,4 +1,11 @@
-import { IsString, IsNumber, IsNotEmpty, IsPositive, IsObject, Min } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsNotEmpty,
+  IsPositive,
+  IsObject,
+  Min,
+} from 'class-validator';
 import type { ProductAttributes } from '../../types/global';
 
 export class CreateProductDto {

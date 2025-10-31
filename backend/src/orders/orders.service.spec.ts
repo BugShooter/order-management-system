@@ -11,7 +11,6 @@ import { CreateOrderDto } from './dto/create-order.dto';
 describe('OrdersService', () => {
   let service: OrdersService;
   let orderRepository: jest.Mocked<Repository<Order>>;
-  let orderItemRepository: jest.Mocked<Repository<OrderItem>>;
   let productsService: jest.Mocked<ProductsService>;
   let queueService: jest.Mocked<IQueueService>;
 
@@ -87,7 +86,6 @@ describe('OrdersService', () => {
 
     service = module.get<OrdersService>(OrdersService);
     orderRepository = module.get(getRepositoryToken(Order));
-    orderItemRepository = module.get(getRepositoryToken(OrderItem));
     productsService = module.get(ProductsService);
     queueService = module.get('IQueueService');
   });
@@ -185,9 +183,11 @@ describe('OrdersService', () => {
         .mockResolvedValueOnce(mockProduct as any)
         .mockResolvedValueOnce(mockProduct2 as any);
 
-      orderRepository.create.mockImplementation((dto: any) => dto as any);
-      orderRepository.save.mockImplementation((order: any) => 
-        Promise.resolve({ ...order, id: 'order-123' } as any)
+      orderRepository.create.mockImplementation(
+        (dto: Partial<Order>) => dto as Order,
+      );
+      orderRepository.save.mockImplementation((order: any) =>
+        Promise.resolve({ ...order, id: 'order-123' }),
       );
 
       // Act
@@ -222,7 +222,7 @@ describe('OrdersService', () => {
         expect.objectContaining({
           type: 'order.created',
           orderId: 'order-123',
-          timestamp: expect.any(Date),
+          timestamp: expect.any(Date) as Date,
           data: expect.objectContaining({
             order: savedOrder,
             customerId: mockOrderDto.customerId,
@@ -247,4 +247,3 @@ describe('OrdersService', () => {
     });
   });
 });
-

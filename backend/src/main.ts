@@ -31,5 +31,5 @@ async function bootstrap() {
 
 // Only run bootstrap if this file is executed directly
 if (require.main === module) {
-  bootstrap();
+  void bootstrap();
 }

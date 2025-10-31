@@ -3,6 +3,7 @@ import request from 'supertest';
 import { createApp } from '../src/main';
 import { DataSource } from 'typeorm';
 import { Product } from '../src/products/entities/product.entity';
+import { Order } from '../src/orders/entities/order.entity';
 
 describe('Orders (e2e)', () => {
   let app: INestApplication;
@@ -57,13 +58,14 @@ describe('Orders (e2e)', () => {
         .send(validOrder)
         .expect(201)
         .expect((res) => {
-          expect(res.body).toHaveProperty('id');
-          expect(res.body).toHaveProperty('customerId', validOrder.customerId);
-          expect(res.body).toHaveProperty('status', 'draft');
-          expect(res.body).toHaveProperty('total', 199.98); // 2 * 99.99
-          expect(res.body).toHaveProperty('items');
-          expect(res.body.items).toHaveLength(1);
-          expect(res.body.shippingAddress).toEqual(validOrder.shippingAddress);
+          const body = res.body as Order;
+          expect(body).toHaveProperty('id');
+          expect(body).toHaveProperty('customerId', validOrder.customerId);
+          expect(body).toHaveProperty('status', 'draft');
+          expect(body).toHaveProperty('total', 199.98); // 2 * 99.99
+          expect(body).toHaveProperty('items');
+          expect(body.items).toHaveLength(1);
+          expect(body.shippingAddress).toEqual(validOrder.shippingAddress);
         });
     });
 

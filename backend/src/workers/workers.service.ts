@@ -29,7 +29,10 @@ export class WorkersService {
     return worker;
   }
 
-  async update(id: string, updateWorkerDto: UpdateWorkerDto): Promise<WorkerConfiguration> {
+  async update(
+    id: string,
+    updateWorkerDto: UpdateWorkerDto,
+  ): Promise<WorkerConfiguration> {
     const worker = await this.findOne(id);
     Object.assign(worker, updateWorkerDto);
     return await this.workerRepository.save(worker);

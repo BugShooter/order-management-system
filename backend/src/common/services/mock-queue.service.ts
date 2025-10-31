@@ -4,7 +4,8 @@ import { IQueueService, OrderEvent } from '../interfaces/queue.interface';
 @Injectable()
 export class MockQueueService implements IQueueService {
   private readonly logger = new Logger(MockQueueService.name);
-  private handlers: Map<string, Array<(event: OrderEvent) => Promise<void>>> = new Map();
+  private handlers: Map<string, Array<(event: OrderEvent) => Promise<void>>> =
+    new Map();
 
   async publish(event: OrderEvent): Promise<void> {
     this.logger.log('Event published to queue:');
@@ -24,7 +25,10 @@ export class MockQueueService implements IQueueService {
     }
   }
 
-  subscribe(eventType: string, handler: (event: OrderEvent) => Promise<void>): void {
+  subscribe(
+    eventType: string,
+    handler: (event: OrderEvent) => Promise<void>,
+  ): void {
     if (!this.handlers.has(eventType)) {
       this.handlers.set(eventType, []);
     }

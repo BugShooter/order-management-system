@@ -1,0 +1,20 @@
+{
+  "name": "order-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Order Management System - Monorepo",
+  "scripts": {
+    "prepare": "husky init",
+    "lint:backend": "cd backend && npm run lint",
+    "test:backend": "cd backend && npm test",
+    "lint:frontend": "cd frontend && npm run lint"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6"
+  },
+  "lint-staged": {
+    "backend/**/*.ts": "npm run lint:backend -- --fix",
+    "frontend/**/*.{ts,tsx}": "npm run lint:frontend -- --fix"
+  }
+}

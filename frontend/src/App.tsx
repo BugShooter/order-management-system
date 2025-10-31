@@ -1,19 +1,18 @@
 import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
-import { fetchProducts, createOrder } from './api';
+import { createOrder } from './api';
 import { OrderFormSchema } from './schemas';
-import type { Product, OrderResponse } from './schemas';
+import type {OrderResponse } from './schemas';
 import { FormField } from './components/FormField';
 import { Success } from './components/Success';
 import './App.css';
+import { useProducts } from './hooks/useProducts';
 
 // Test customer ID
 const TEST_CUSTOMER_ID = '550e8400-e29b-41d4-a716-446655440000';
 
 function App() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState('');
+  const { products, isLoading, loadError } = useProducts();
   
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
@@ -28,18 +27,6 @@ function App() {
 
   // Get first product for ordering
   const product = products[0];
-
-  useEffect(() => {
-    fetchProducts()
-      .then(validatedProducts => {
-        setProducts(validatedProducts);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        setLoadError(err.message);
-        setIsLoading(false);
-      });
-  }, []);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();

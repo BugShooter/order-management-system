@@ -5,6 +5,13 @@ import { AppModule } from './app.module';
 export async function createApp(): Promise<INestApplication> {
   const app = await NestFactory.create(AppModule);
 
+  // Enable CORS
+  app.enableCors({
+    origin: '*', // Allow all origins (for development)
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
   // Enable validation globally
   app.useGlobalPipes(
     new ValidationPipe({
